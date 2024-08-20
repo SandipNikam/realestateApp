@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  realestate:
+    image: real-estate
+    ports:
+      - "8081:8081"
+    networks:
+      - springboot-db-net
+    depends_on:
+      - mysqldb
+    volumes:
+      - ./data/springboot-app:/data/springboot-app
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_PORT: 3306
+      MYSQL_DB_NAME: b11
+      MYSQL_USER: root
+
+  mysqldb:
+    image: mysql:8.0.39
+    networks:
+      - springboot-db-net
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: b11
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "mysqldb"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  springboot-db-net:
